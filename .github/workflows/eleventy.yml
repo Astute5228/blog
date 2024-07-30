@@ -10,6 +10,7 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
+      - run: npm i --force @img/sharp-linux-x64
       - run: npm ci
       - run: npx eleventy
       - name: Deploy
