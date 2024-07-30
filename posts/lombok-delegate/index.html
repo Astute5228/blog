@@ -1,0 +1,64 @@
+<!doctype html>
+    <html lang="en">
+      <head>
+        <title>@Delegate annotation</title>
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1/new.min.css"
+        />
+        <link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css" />
+        <link
+          href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css"
+          rel="stylesheet"
+        />
+      </head>
+      <body>
+        <header>
+          <nav style="display:flex;justify-content:space-between;align-items:center;">
+            <a href="/"><h3>compti.me</h3></a>
+            <span>
+              <a href="https://github.com/mattmurr">GitHub</a>
+              <a href="https://x.com/mattmurr001">X</a>
+              <a href="/feed.xml">RSS</a>
+            </span>
+          </nav>
+        </header>
+
+        <main><article>
+      <h1>@Delegate annotation</h1>
+
+    <p>I recently came across the <code>@Delegate</code> annotation from <a href="https://projectlombok.org">Lombok</a>.
+It turns out I'm not the only person who frequently discovers new things about Lombok, as I've written about another annotation recently: <a href="../lombok-standard-exception/"><code>@StandardException</code></a>.</p>
+<p>The <code>@Delegate</code> annotation is a handy way to delegate methods from one class to another. This can be useful when you want to reuse the methods of another class without having to write them all out again.</p>
+<p>Here's a simple example to demonstrate:</p>
+<pre class="language-java"><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">lombok<span class="token punctuation">.</span>experimental<span class="token punctuation">.</span></span><span class="token class-name">Delegate</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">DelegateExample</span> <span class="token punctuation">{</span>
+    <span class="token keyword">interface</span> <span class="token class-name">Greet</span> <span class="token punctuation">{</span>
+        <span class="token class-name">String</span> <span class="token function">greet</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">static</span> <span class="token keyword">class</span> <span class="token class-name">GreetImpl</span> <span class="token keyword">implements</span> <span class="token class-name">Greet</span> <span class="token punctuation">{</span>
+        <span class="token annotation punctuation">@Override</span>
+        <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">greet</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> <span class="token string">"Hello, World!"</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token annotation punctuation">@Delegate</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">Greet</span> greet <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">GreetImpl</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token class-name">DelegateExample</span> example <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">DelegateExample</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>example<span class="token punctuation">.</span><span class="token function">greet</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<p>In this example, we have an interface <code>Greet</code> with a single method <code>greet()</code>. We then have a class <code>GreetImpl</code> that implements this interface. Finally, we have a <code>DelegateExample</code> class that uses the <code>@Delegate</code> annotation to delegate the <code>greet()</code> method to an instance of <code>GreetImpl</code>.</p>
+<p>This code will output <code>Hello, World!</code>, which is the result of calling the <code>greet()</code> method on the <code>GreetImpl</code> instance.</p>
+<p>According to the <a href="https://projectlombok.org/features/experimental/Delegate">Lombok page on <code>@Delegate</code></a>, this annotation will probably not move out of experimental status, so use it with caution. However, it can be a useful tool in your toolbox when you need to delegate methods between classes.</p>
+<p>I'm always a fan of reducing boilerplate code especially when it comes to Java, <code>@Delegate</code> is a great way to do that when you need to reuse methods across classes. I'll definitely be keeping this annotation in mind for future projects.</p>
+
+  </article></main>
+        <footer style="text-align:right;"><small>Last build: Tue, 30 Jul 2024 19:56:32 GMT</small></footer>
+      </body>
+    </html>

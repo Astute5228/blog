@@ -1,0 +1,45 @@
+<!doctype html>
+    <html lang="en">
+      <head>
+        <title>Streamline password management on MacOS with pass & fzf</title>
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1/new.min.css"
+        />
+        <link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css" />
+        <link
+          href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css"
+          rel="stylesheet"
+        />
+      </head>
+      <body>
+        <header>
+          <nav style="display:flex;justify-content:space-between;align-items:center;">
+            <a href="/"><h3>compti.me</h3></a>
+            <span>
+              <a href="https://github.com/mattmurr">GitHub</a>
+              <a href="https://x.com/mattmurr001">X</a>
+              <a href="/feed.xml">RSS</a>
+            </span>
+          </nav>
+        </header>
+
+        <main><article>
+      <h1>Streamline password management on MacOS with pass & fzf</h1>
+
+    <p>I use <a href="https://www.passwordstore.org/"><code>pass</code></a> and this simple shell script that searches <code>.gpg</code> files in <code>~/.password-store</code> or <code>PASSWORD_STORE_DIR</code> (if set) and pipes into <a href="https://https//github.com/junegunn/fzf"><code>fzf</code></a>:</p>
+<pre class="language-bash"><code class="language-bash"><span class="token shebang important">#!/usr/bin/env bash</span>
+
+<span class="token function">pushd</span> <span class="token string">"<span class="token variable">${PASSWORD_STORE_DIR<span class="token operator">:-</span>$HOME<span class="token operator">/</span>.password-store}</span>"</span>
+<span class="token assign-left variable">PASSFILE</span><span class="token operator">=</span><span class="token variable"><span class="token variable">`</span>fd <span class="token parameter variable">-t</span> <span class="token function">file</span> <span class="token parameter variable">-e</span> gpg <span class="token parameter variable">--color</span><span class="token operator">=</span>always <span class="token operator">|</span> <span class="token function">sed</span> <span class="token string">'s/\.gpg//; s/^\.\///'</span> <span class="token operator">|</span> fzf <span class="token parameter variable">--ansi</span><span class="token variable">`</span></span>
+<span class="token function">popd</span>
+
+<span class="token punctuation">[</span> <span class="token parameter variable">-z</span> <span class="token string">"<span class="token variable">$PASSFILE</span>"</span> <span class="token punctuation">]</span> <span class="token operator">&amp;&amp;</span> <span class="token builtin class-name">exit</span> <span class="token number">0</span>
+
+pass <span class="token parameter variable">-c</span> <span class="token variable">$PASSFILE</span> <span class="token operator"><span class="token file-descriptor important">1</span>></span>/dev/null</code></pre>
+<p><a href="https://github.com/deseven/iCanHazShortcut">iCanHazShortcut</a> let me assign shortcuts to my script. Pressing <strong>&lt;kbd&gt;Command&lt;/kbd&gt;</strong> + <strong>&lt;kbd&gt;P&lt;/kbd&gt;</strong> runs <code>alacritty -e sh -c '~/bin/fzf-passmenu'</code>, which opens a new terminal window and runs the script. It's a fast and simple process.</p>
+
+  </article></main>
+        <footer style="text-align:right;"><small>Last build: Tue, 30 Jul 2024 19:56:32 GMT</small></footer>
+      </body>
+    </html>
