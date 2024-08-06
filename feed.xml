@@ -4,9 +4,232 @@
   <subtitle>A blog from a consultant in the UK about software development, technology, and other random things like my veggie garden</subtitle>
   <link href="https://compti.me/feed.xml" rel="self" />
   <link href="https://compti.me/" />
-  <updated>2024-07-30T19:58:32Z</updated>
+  <updated>2024-07-26T00:00:00Z</updated>
   <id>https://compti.me/</id>
   <author>
     <name>Matthew Murray</name>
   </author>
+  <entry>
+    <title>Looking into Spring Validation</title>
+    <link href="https://compti.me/posts/an-investigation-on-spring-validation/" />
+    <updated>2024-07-26T00:00:00Z</updated>
+    <id>https://compti.me/posts/an-investigation-on-spring-validation/</id>
+    <content type="html">&lt;p&gt;I recently had a look into Spring Validation and discovered new ways it can be used. Here&#39;s a simple example that is commonly used in Spring Boot applications.&lt;/p&gt;
+&lt;p&gt;A simple &lt;code&gt;Person&lt;/code&gt; class with validation constraint annotations:&lt;/p&gt;
+&lt;pre class=&quot;language-java&quot;&gt;&lt;code class=&quot;language-java&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;token namespace&quot;&gt;com&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;example&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;spring_validated&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;lib&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;token import&quot;&gt;&lt;span class=&quot;token namespace&quot;&gt;jakarta&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;validation&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;constraints&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token class-name&quot;&gt;Min&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;token import&quot;&gt;&lt;span class=&quot;token namespace&quot;&gt;jakarta&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;validation&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;constraints&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token class-name&quot;&gt;NotBlank&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;token keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;Person&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+
+    &lt;span class=&quot;token annotation punctuation&quot;&gt;@NotBlank&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;String&lt;/span&gt; name&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;token annotation punctuation&quot;&gt;@Min&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;18&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;int&lt;/span&gt; age&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;token keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;Person&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token class-name&quot;&gt;String&lt;/span&gt; name&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;int&lt;/span&gt; age&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;token keyword&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;name &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; name&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;token keyword&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;age &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; age&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And a controller that uses the &lt;code&gt;Person&lt;/code&gt; class as a dependency:&lt;/p&gt;
+&lt;pre class=&quot;language-java&quot;&gt;&lt;code class=&quot;language-java&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;token namespace&quot;&gt;com&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;example&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;spring_validated&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;token import&quot;&gt;&lt;span class=&quot;token namespace&quot;&gt;com&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;example&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;spring_validated&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;lib&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token class-name&quot;&gt;Person&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;token import&quot;&gt;&lt;span class=&quot;token namespace&quot;&gt;jakarta&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;validation&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token class-name&quot;&gt;Valid&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;token import&quot;&gt;&lt;span class=&quot;token namespace&quot;&gt;org&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;springframework&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;validation&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;annotation&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token class-name&quot;&gt;Validated&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;token import&quot;&gt;&lt;span class=&quot;token namespace&quot;&gt;org&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;springframework&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;web&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;bind&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;annotation&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token class-name&quot;&gt;PostMapping&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;token import&quot;&gt;&lt;span class=&quot;token namespace&quot;&gt;org&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;springframework&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;web&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;bind&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;annotation&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token class-name&quot;&gt;RequestBody&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;token import&quot;&gt;&lt;span class=&quot;token namespace&quot;&gt;org&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;springframework&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;web&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;bind&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;annotation&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token class-name&quot;&gt;RestController&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;token annotation punctuation&quot;&gt;@RestController&lt;/span&gt;
+&lt;span class=&quot;token annotation punctuation&quot;&gt;@Validated&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;PersonController&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+
+    &lt;span class=&quot;token annotation punctuation&quot;&gt;@PostMapping&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;/person&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;createPerson&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token annotation punctuation&quot;&gt;@Valid&lt;/span&gt; &lt;span class=&quot;token annotation punctuation&quot;&gt;@RequestBody&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;Person&lt;/span&gt; person&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;Person created: &quot;&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;+&lt;/span&gt; person&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token function&quot;&gt;getName&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If we use this endpoint without giving a name in the request body, we will get a &lt;strong&gt;400 Bad Request&lt;/strong&gt; response since it does not meet the constraints in the &lt;code&gt;Person&lt;/code&gt; class.&lt;/p&gt;
+&lt;p&gt;In my application, the &lt;code&gt;Person&lt;/code&gt; class is declared in a separate library, meaning that Spring Validation actually works across different libraries. Additionally, not only will Spring Validation apply constraints from your dependency class, but it also works with sub-dependencies as long as they are annotated with &lt;code&gt;@Valid&lt;/code&gt;, like this &lt;code&gt;Address&lt;/code&gt; record:&lt;/p&gt;
+&lt;pre class=&quot;language-java&quot;&gt;&lt;code class=&quot;language-java&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;token namespace&quot;&gt;com&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;example&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;spring_validated&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;anotherlib&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;token import&quot;&gt;&lt;span class=&quot;token namespace&quot;&gt;jakarta&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;validation&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;constraints&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token class-name&quot;&gt;NotBlank&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;token keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;record&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;Address&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token annotation punctuation&quot;&gt;@NotBlank&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;String&lt;/span&gt; street&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&quot;language-java&quot;&gt;&lt;code class=&quot;language-java&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;token namespace&quot;&gt;com&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;example&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;spring_validated&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;lib&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;token import&quot;&gt;&lt;span class=&quot;token namespace&quot;&gt;com&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;example&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;spring_validated&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;anotherlib&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token class-name&quot;&gt;Address&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;token import&quot;&gt;&lt;span class=&quot;token namespace&quot;&gt;jakarta&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;validation&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;constraints&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token class-name&quot;&gt;Min&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;token import&quot;&gt;&lt;span class=&quot;token namespace&quot;&gt;jakarta&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;validation&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;constraints&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token class-name&quot;&gt;NotBlank&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;token keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;Person&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+
+    &lt;span class=&quot;token annotation punctuation&quot;&gt;@NotBlank&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;String&lt;/span&gt; name&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;token annotation punctuation&quot;&gt;@Min&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;18&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;int&lt;/span&gt; age&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;token annotation punctuation&quot;&gt;@NotNull&lt;/span&gt;
+    &lt;span class=&quot;token annotation punctuation&quot;&gt;@Valid&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;Address&lt;/span&gt; address&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;token keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;Person&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token class-name&quot;&gt;String&lt;/span&gt; name&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;int&lt;/span&gt; age&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;token keyword&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;name &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; name&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;token keyword&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;age &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; age&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;My investigation was led by a desire to validate outside a controller, and I found that &lt;code&gt;@Validated&lt;/code&gt; can also be applied to other beans like Services.&lt;/p&gt;
+&lt;pre class=&quot;language-java&quot;&gt;&lt;code class=&quot;language-java&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;token namespace&quot;&gt;com&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;example&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;spring_validated&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;app&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;token import&quot;&gt;&lt;span class=&quot;token namespace&quot;&gt;org&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;springframework&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;stereotype&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token class-name&quot;&gt;Service&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;token import&quot;&gt;&lt;span class=&quot;token namespace&quot;&gt;org&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;springframework&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;validation&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;annotation&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token class-name&quot;&gt;Validated&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;token import&quot;&gt;&lt;span class=&quot;token namespace&quot;&gt;com&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;example&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;spring_validated&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;lib&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token class-name&quot;&gt;Person&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;token import&quot;&gt;&lt;span class=&quot;token namespace&quot;&gt;jakarta&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;validation&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token class-name&quot;&gt;Valid&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;token annotation punctuation&quot;&gt;@Service&lt;/span&gt;
+&lt;span class=&quot;token annotation punctuation&quot;&gt;@Validated&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;PersonService&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+
+  &lt;span class=&quot;token keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;validate&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token annotation punctuation&quot;&gt;@Valid&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;Person&lt;/span&gt; person&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;token class-name&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;out&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token function&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Validated person: &quot;&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;+&lt;/span&gt; person&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This is useful in my case where I want to validate data classes that we formed via extensive business logic before it is persisted or sent to another service.&lt;/p&gt;
+&lt;p&gt;I hope my notes on Spring Validation are helpful to you. I found some new ways to apply validations in my applications and I hope you can too.&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>@Delegate annotation</title>
+    <link href="https://compti.me/posts/lombok-delegate/" />
+    <updated>2024-07-24T00:00:00Z</updated>
+    <id>https://compti.me/posts/lombok-delegate/</id>
+    <content type="html">&lt;p&gt;I recently came across the &lt;code&gt;@Delegate&lt;/code&gt; annotation from &lt;a href=&quot;https://projectlombok.org&quot;&gt;Lombok&lt;/a&gt;.
+It turns out I&#39;m not the only person who frequently discovers new things about Lombok, as I&#39;ve written about another annotation recently: &lt;a href=&quot;https://compti.me/posts/lombok-standard-exception/&quot;&gt;&lt;code&gt;@StandardException&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;@Delegate&lt;/code&gt; annotation is a handy way to delegate methods from one class to another. This can be useful when you want to reuse the methods of another class without having to write them all out again.&lt;/p&gt;
+&lt;p&gt;Here&#39;s a simple example to demonstrate:&lt;/p&gt;
+&lt;pre class=&quot;language-java&quot;&gt;&lt;code class=&quot;language-java&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;token import&quot;&gt;&lt;span class=&quot;token namespace&quot;&gt;lombok&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;experimental&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token class-name&quot;&gt;Delegate&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;token keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;DelegateExample&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;interface&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;Greet&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;token class-name&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;greet&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;token keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;GreetImpl&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;Greet&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;token annotation punctuation&quot;&gt;@Override&lt;/span&gt;
+        &lt;span class=&quot;token keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;greet&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;Hello, World!&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;token annotation punctuation&quot;&gt;@Delegate&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;Greet&lt;/span&gt; greet &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;GreetImpl&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;token keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token class-name&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt; args&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;token class-name&quot;&gt;DelegateExample&lt;/span&gt; example &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;DelegateExample&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;token class-name&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;out&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token function&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;example&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token function&quot;&gt;greet&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In this example, we have an interface &lt;code&gt;Greet&lt;/code&gt; with a single method &lt;code&gt;greet()&lt;/code&gt;. We then have a class &lt;code&gt;GreetImpl&lt;/code&gt; that implements this interface. Finally, we have a &lt;code&gt;DelegateExample&lt;/code&gt; class that uses the &lt;code&gt;@Delegate&lt;/code&gt; annotation to delegate the &lt;code&gt;greet()&lt;/code&gt; method to an instance of &lt;code&gt;GreetImpl&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;This code will output &lt;code&gt;Hello, World!&lt;/code&gt;, which is the result of calling the &lt;code&gt;greet()&lt;/code&gt; method on the &lt;code&gt;GreetImpl&lt;/code&gt; instance.&lt;/p&gt;
+&lt;p&gt;According to the &lt;a href=&quot;https://projectlombok.org/features/experimental/Delegate&quot;&gt;Lombok page on &lt;code&gt;@Delegate&lt;/code&gt;&lt;/a&gt;, this annotation will probably not move out of experimental status, so use it with caution. However, it can be a useful tool in your toolbox when you need to delegate methods between classes.&lt;/p&gt;
+&lt;p&gt;I&#39;m always a fan of reducing boilerplate code especially when it comes to Java, &lt;code&gt;@Delegate&lt;/code&gt; is a great way to do that when you need to reuse methods across classes. I&#39;ll definitely be keeping this annotation in mind for future projects.&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>JManc Unconference 24</title>
+    <link href="https://compti.me/posts/jmanc-unconference-24/" />
+    <updated>2024-07-13T00:00:00Z</updated>
+    <id>https://compti.me/posts/jmanc-unconference-24/</id>
+    <content type="html">&lt;p&gt;I recently attended the JManc Unconference 24, and it was a great experience. The event was held at the Auto Trader&#39;s office in Manchester, and it was a full day of discussing all things Java.&lt;/p&gt;
+&lt;p&gt;The day kicked off with a keynote from Helen Scott, a developer advocate at JetBrains, the keynote was focused on AI, touching on developer effectiveness.&lt;/p&gt;
+&lt;p&gt;The event followed an &lt;a href=&quot;https://en.wikipedia.org/wiki/Open_space_technology&quot;&gt;Open Space Technology&lt;/a&gt; format where the attendees could propose sessions and join in on the ones that interested them. The schedule ended up as follows:&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://compti.me/assets/img/ssg9mZtysD-250.webp 250w, https://compti.me/assets/img/ssg9mZtysD-426.webp 426w, https://compti.me/assets/img/ssg9mZtysD-580.webp 580w, https://compti.me/assets/img/ssg9mZtysD-768.webp 768w&quot; sizes=&quot;(max-width: 750px)&quot;&gt;&lt;img alt=&quot;The decided schedule&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://compti.me/assets/img/ssg9mZtysD-250.jpeg&quot; width=&quot;768&quot; height=&quot;768&quot; srcset=&quot;https://compti.me/assets/img/ssg9mZtysD-250.jpeg 250w, https://compti.me/assets/img/ssg9mZtysD-426.jpeg 426w, https://compti.me/assets/img/ssg9mZtysD-580.jpeg 580w, https://compti.me/assets/img/ssg9mZtysD-768.jpeg 768w&quot; sizes=&quot;(max-width: 750px)&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;It was interesting to hear other people&#39;s thoughts on each topic. I felt that some sessions lacked direction, but I think that&#39;s the nature of the format. The facilitators tried their best to navigate, avoiding &lt;em&gt;awkward conversations and silence.&lt;/em&gt; I enjoyed the sessions that were more focused and had a clear direction on the topic being discussed.&lt;/p&gt;
+&lt;p&gt;There is one law of the Open Space Technology format: &amp;quot;The Law of Two Feet&amp;quot;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;If at any time during our time together you find yourself in any situation where you are neither learning nor contributing, use your two feet, go someplace else.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;I will remember this for next time. I&#39;m looking forward it, and I hope to see some familiar faces there.&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Sleeping on the floor</title>
+    <link href="https://compti.me/posts/sleeping-on-the-floor/" />
+    <updated>2024-07-11T00:00:00Z</updated>
+    <id>https://compti.me/posts/sleeping-on-the-floor/</id>
+    <content type="html">&lt;p&gt;Something&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>From sitting, to standing, and now I&#39;m on the floor</title>
+    <link href="https://compti.me/posts/from-sitting-to-standing-and-now-im-on-the-floor/" />
+    <updated>2024-07-07T00:00:00Z</updated>
+    <id>https://compti.me/posts/from-sitting-to-standing-and-now-im-on-the-floor/</id>
+    <content type="html">&lt;p&gt;I&#39;ve opted for taking apart my &lt;a href=&quot;https://flexispot.co.uk/adjustable-standing-desk-pro-series.html&quot;&gt;FlexiSpot standing desk&lt;/a&gt; down in favour of a portable &lt;a href=&quot;https://en.wikipedia.org/wiki/Chabudai&quot;&gt;Chabudai&lt;/a&gt; style of table and a &amp;quot;meditation&amp;quot; cushion to sit on. These tables are really low down close to the ground and suited for working whilst sitting on the floor.&lt;/p&gt;
+&lt;p&gt;Long gone are the days of being constrained to a desk in my bedroom, but instead a small table I can set out anywhere in the house. I want to enjoy all parts of my home while WFH, and encourage myself to go out to work, whether this be at the office or a coffee shop. Essentially moving around a lot more!&lt;/p&gt;
+&lt;p&gt;Supposedly there are long term benefits to sitting naturally, on the floor. I&#39;m sure it will take some getting used to.&lt;/p&gt;
+&lt;p&gt;These are the items for anyone interested:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.amazon.co.uk/gp/product/B0BF11XPQZ/ref=ppx_yo_dt_b_asin_title_o02_s02?ie=UTF8&amp;amp;th=1&quot;&gt;Meditation cushion&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.amazon.co.uk/gp/product/B0C1N1Q8CH/ref=ppx_yo_dt_b_asin_title_o02_s00?ie=UTF8&amp;amp;psc=1&quot;&gt;Portable floor desk&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+  </entry>
+  <entry>
+    <title>@StandardException</title>
+    <link href="https://compti.me/posts/lombok-standard-exception/" />
+    <updated>2024-07-05T00:00:00Z</updated>
+    <id>https://compti.me/posts/lombok-standard-exception/</id>
+    <content type="html">&lt;p&gt;I recently came across a little gem annotation from &lt;a href=&quot;https://projectlombok.org&quot;&gt;Lombok&lt;/a&gt; that I had never heard of before: &lt;code&gt;@StandardException&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;You can annotate your Exception classes (&lt;code&gt;extends exception&lt;/code&gt;) with this annotation, it will generate the usual constructors for your exception type that you would normally write.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://projectlombok.org/features/experimental/StandardException&quot;&gt;https://projectlombok.org/features/experimental/StandardException&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;This is a small thing, but it can save you some time and make your code cleaner. I will definitely be using this annotation in my future projects.&lt;/p&gt;
+&lt;p&gt;On one hand, this makes me wonder about all the other useful annotations that I have not yet discovered, but it also led me to think about &lt;a href=&quot;https://theboreddev.com/the-problems-of-annotation-driven-development/&quot;&gt;the problems of annotation driven development&lt;/a&gt;&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>New beginnings</title>
+    <link href="https://compti.me/posts/a-new-blog/" />
+    <updated>2024-06-22T00:00:00Z</updated>
+    <id>https://compti.me/posts/a-new-blog/</id>
+    <content type="html">&lt;p&gt;After a long struggle with my old blog, I&#39;ve decided to start fresh. I&#39;m going to write about all the things that interest me, and I hope you&#39;ll enjoy reading about them.&lt;/p&gt;
+&lt;p&gt;I&#39;m planning to write about:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Software development&lt;/li&gt;
+&lt;li&gt;Technology&lt;/li&gt;
+&lt;li&gt;Books&lt;/li&gt;
+&lt;li&gt;My vegetable garden&lt;/li&gt;
+&lt;li&gt;And anything else that catches my interest&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This blog will also act as a sort of public notebook for myself. I&#39;m always learning new things, and I want to keep track of what I&#39;ve learned. I hope that by writing about it, I&#39;ll be able to retain more information.&lt;/p&gt;
+&lt;p&gt;It will be interesting to see if I can keep up with this blog given my hectic family life, but I&#39;m determined to give it a shot.&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Streamline password management on MacOS with pass &amp; fzf</title>
+    <link href="https://compti.me/posts/fzf-passmenu/" />
+    <updated>2023-01-05T00:00:00Z</updated>
+    <id>https://compti.me/posts/fzf-passmenu/</id>
+    <content type="html">&lt;p&gt;I use &lt;a href=&quot;https://www.passwordstore.org/&quot;&gt;&lt;code&gt;pass&lt;/code&gt;&lt;/a&gt; and this simple shell script that searches &lt;code&gt;.gpg&lt;/code&gt; files in &lt;code&gt;~/.password-store&lt;/code&gt; or &lt;code&gt;PASSWORD_STORE_DIR&lt;/code&gt; (if set) and pipes into &lt;a href=&quot;https://https//github.com/junegunn/fzf&quot;&gt;&lt;code&gt;fzf&lt;/code&gt;&lt;/a&gt;:&lt;/p&gt;
+&lt;pre class=&quot;language-bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;&lt;span class=&quot;token shebang important&quot;&gt;#!/usr/bin/env bash&lt;/span&gt;
+
+&lt;span class=&quot;token function&quot;&gt;pushd&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;${PASSWORD_STORE_DIR&lt;span class=&quot;token operator&quot;&gt;:-&lt;/span&gt;$HOME&lt;span class=&quot;token operator&quot;&gt;/&lt;/span&gt;.password-store}&lt;/span&gt;&quot;&lt;/span&gt;
+&lt;span class=&quot;token assign-left variable&quot;&gt;PASSFILE&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token variable&quot;&gt;&lt;span class=&quot;token variable&quot;&gt;`&lt;/span&gt;fd &lt;span class=&quot;token parameter variable&quot;&gt;-t&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;file&lt;/span&gt; &lt;span class=&quot;token parameter variable&quot;&gt;-e&lt;/span&gt; gpg &lt;span class=&quot;token parameter variable&quot;&gt;--color&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;always &lt;span class=&quot;token operator&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;sed&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&#39;s/&#92;.gpg//; s/^&#92;.&#92;///&#39;&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;|&lt;/span&gt; fzf &lt;span class=&quot;token parameter variable&quot;&gt;--ansi&lt;/span&gt;&lt;span class=&quot;token variable&quot;&gt;`&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;token function&quot;&gt;popd&lt;/span&gt;
+
+&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;token parameter variable&quot;&gt;-z&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;&lt;span class=&quot;token variable&quot;&gt;$PASSFILE&lt;/span&gt;&quot;&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;token builtin class-name&quot;&gt;exit&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;0&lt;/span&gt;
+
+pass &lt;span class=&quot;token parameter variable&quot;&gt;-c&lt;/span&gt; &lt;span class=&quot;token variable&quot;&gt;$PASSFILE&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;&lt;span class=&quot;token file-descriptor important&quot;&gt;1&lt;/span&gt;&gt;&lt;/span&gt;/dev/null&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/deseven/iCanHazShortcut&quot;&gt;iCanHazShortcut&lt;/a&gt; let me assign shortcuts to my script. Pressing &lt;strong&gt;&amp;lt;kbd&amp;gt;Command&amp;lt;/kbd&amp;gt;&lt;/strong&gt; + &lt;strong&gt;&amp;lt;kbd&amp;gt;P&amp;lt;/kbd&amp;gt;&lt;/strong&gt; runs &lt;code&gt;alacritty -e sh -c &#39;~/bin/fzf-passmenu&#39;&lt;/code&gt;, which opens a new terminal window and runs the script. It&#39;s a fast and simple process.&lt;/p&gt;
+</content>
+  </entry>
 </feed>
