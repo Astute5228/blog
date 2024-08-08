@@ -8,7 +8,6 @@ const li = (collection) => {
   if (collection.len < 1) return [];
   return collection
     .sort((a, b) => b.page.date - a.page.date)
-    .filter(({ data }) => data.draft !== true)
     .map(
       ({ page, data, url }) =>
         html`<li>
