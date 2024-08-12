@@ -112,5 +112,5 @@ public class PersonService {
 
 This is useful in my case where I want to validate data classes that we formed via extensive business logic before it is persisted or sent to another service.
 
-I hope my notes on Spring Validation are helpful to you. I found some new ways to apply validations in my applications and I hope you can too.
+I found some new ways to apply validations in my applications and I hope you can too.
 
