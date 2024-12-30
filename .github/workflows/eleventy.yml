@@ -13,10 +13,28 @@ jobs:
       - run: npm i --force @img/sharp-linux-x64
       - run: npm ci
       - run: npx eleventy
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+      # - name: Deploy
+      #   uses: peaceiris/actions-gh-pages@v3
+      #   with:
+      #     publish_dir: _site 
+      #     publish_branch: gh-pages
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     cname: compti.me
+      - name: Assume role using OIDC
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          publish_dir: _site 
-          publish_branch: gh-pages
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          cname: compti.me
+          role-to-assume: arn:aws:iam::217060171309:role/GitHubActionsRole
+          aws-region: eu-west-2
+
+      - name: CDK setup
+        working-directory: cdk/
+        run: npm ci
+
+      - name: CDK synth
+        working-directory: cdk/
+        run: npx cdk synth
+
+      - name: CDK deploy
+        working-directory: cdk/
+        run: npx cdk deploy --require-approval never
+
