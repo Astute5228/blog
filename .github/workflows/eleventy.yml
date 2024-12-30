@@ -1,6 +1,10 @@
 name: Eleventy Build
 on: [push, workflow_dispatch]
 
+permissions:
+    id-token: write
+    contents: read
+
 jobs:
   build_deploy:
     runs-on: ubuntu-22.04
