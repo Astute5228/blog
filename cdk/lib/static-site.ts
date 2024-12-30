@@ -30,8 +30,12 @@ export class StaticSite extends Construct {
 
     new cdk.CfnOutput(this, "BucketName", { value: bucket.bucketName })
 
-    const func = new Function(this, "RedirectFunction", {
+    const redirectFunc = new Function(this, "RedirectFunction", {
       code: FunctionCode.fromFile({ filePath: path.join(__dirname, "./redirect-trailing-slash.js") }),
+    })
+
+    const redirectMastoFunc = new Function(this, "RedirectMastodonFunction", {
+      code: FunctionCode.fromFile({ filePath: path.join(__dirname, "./redirect-mastodon.js") }),
     })
 
 
@@ -47,7 +51,11 @@ export class StaticSite extends Construct {
         viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         functionAssociations: [
           {
-            function: func,
+            function: redirectFunc,
+            eventType: FunctionEventType.VIEWER_REQUEST
+          },
+          {
+            function: redirectMastoFunc,
             eventType: FunctionEventType.VIEWER_REQUEST
           }
         ]
