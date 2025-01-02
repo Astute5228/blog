@@ -1,5 +1,8 @@
-name: Eleventy Build
-on: [push, workflow_dispatch]
+name: 11ty build and deploy
+on:
+  push:
+    branches:
+      - main
 
 permissions:
     id-token: write
@@ -17,13 +20,7 @@ jobs:
       - run: npm i --force @img/sharp-linux-x64
       - run: npm ci
       - run: npx eleventy
-      # - name: Deploy
-      #   uses: peaceiris/actions-gh-pages@v3
-      #   with:
-      #     publish_dir: _site 
-      #     publish_branch: gh-pages
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     cname: compti.me
+
       - name: Assume role using OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
