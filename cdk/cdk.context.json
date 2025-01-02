@@ -1,0 +1,10 @@
+{
+  "hosted-zone:account=217060171309:domainName=compti.me:region=eu-west-2": {
+    "Id": "/hostedzone/Z00910684LH8MCPAZG4G",
+    "Name": "compti.me."
+  },
+  "hosted-zone:account=217060171309:domainName=compti.me:region=us-east-1": {
+    "Id": "/hostedzone/Z00910684LH8MCPAZG4G",
+    "Name": "compti.me."
+  }
+}
